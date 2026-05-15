@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamMode - Painel de Moderador</title>
+  <link rel="stylesheet" href="CoreStyle.css">
+</head>
+<body>
+  <main class="moderator-app" aria-label="Painel de moderador StreamMode">
+    <header class="topbar">
+      <button class="home-button" aria-label="Inicio">
+        <span class="home-icon" aria-hidden="true"></span>
+      </button>
+
+      <button class="stream-tab is-active" type="button">
+        <span class="feather-mark" aria-hidden="true"></span>
+        <span>Streamer 1</span>
+      </button>
+
+      <button class="tab-add" type="button" aria-label="Adicionar streamer">+</button>
+    </header>
+
+    <section class="workspace">
+      <aside class="left-panel" aria-label="Navegacao do projeto">
+        <section class="stream-card" aria-label="Canal selecionado">
+          <div class="avatar" aria-hidden="true">
+            <span></span>
+          </div>
+          <div class="stream-meta">
+            <p>[titulo da live]</p>
+            <small>@[nome do streamer]</small>
+          </div>
+        </section>
+
+        <nav class="panel-tabs" aria-label="Abas laterais">
+          <button class="tab-current" type="button">Painel</button>
+          <button type="button">Recursos</button>
+        </nav>
+
+        <section class="pages-section">
+          <div class="section-heading">
+            <span>Páginas</span>
+            <button type="button" aria-label="Adicionar pagina">+</button>
+          </div>
+          <button class="page-item is-selected" type="button">Página 1</button>
+        </section>
+
+        <section class="layers-section">
+          <div class="section-heading">
+            <span>Camadas</span>
+          </div>
+
+          <div class="layers-stack" role="list" aria-label="Camadas da cena">
+            <button class="layer-item is-selected" type="button" role="listitem">
+              <span class="text-layer-icon" aria-hidden="true">A*</span>
+              <span>Texto 1</span>
+            </button>
+            <button class="layer-item" type="button" role="listitem">
+              <span class="text-layer-icon" aria-hidden="true">A*</span>
+              <span>Texto 2</span>
+            </button>
+            <button class="layer-item" type="button" role="listitem">
+              <span class="text-layer-icon" aria-hidden="true">A*</span>
+              <span>Texto 3</span>
+            </button>
+          </div>
+
+          <div class="layer-tools" aria-label="Adicionar elementos">
+            <button type="button" aria-label="Adicionar camada">+</button>
+            <button type="button" aria-label="Adicionar imagem">
+              <span class="icon image-icon" aria-hidden="true"></span>
+            </button>
+            <button type="button" aria-label="Adicionar frame">
+              <span class="icon frame-icon" aria-hidden="true"></span>
+            </button>
+            <button type="button" aria-label="Adicionar texto">
+              <span class="icon type-icon" aria-hidden="true">A*</span>
+            </button>
+            <button type="button" aria-label="Agrupar camadas">
+              <span class="icon stack-icon" aria-hidden="true"></span>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="canvas-area" aria-label="Area de pre-visualizacao">
+        <div class="canvas-corner" aria-hidden="true"></div>
+        <button class="preview-pill" type="button">Preview</button>
+        <div class="live-frame" aria-label="Previa da transmissao ao vivo">
+          <div class="safe-guide guide-top" aria-hidden="true"></div>
+          <div class="safe-guide guide-right" aria-hidden="true"></div>
+          <div class="safe-guide guide-bottom" aria-hidden="true"></div>
+          <div class="safe-guide guide-left" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-label="Propriedades da camada">
+        <section class="inspector-title">
+          <span class="text-layer-icon" aria-hidden="true">A*</span>
+          <span>Texto 1</span>
+        </section>
+
+        <section class="property-block align-block">
+          <p class="property-label">Alinhamento</p>
+          <div class="coordinate-row">
+            <label>
+              <span>X</span>
+              <input type="text" value="1234" aria-label="Posicao X">
+            </label>
+            <label>
+              <span>Y</span>
+              <input type="text" value="1234" aria-label="Posicao Y">
+            </label>
+          </div>
+          <button class="move-button" type="button">Mover com o mouse</button>
+        </section>
+
+        <section class="property-block type-block">
+          <p class="property-label">Tipografia</p>
+          <label class="select-shell">
+            <span class="sr-only">Fonte</span>
+            <select aria-label="Fonte">
+              <option>Jetbrains mono NFP</option>
+              <option>Inter</option>
+              <option>Geist Mono</option>
+              <option>Arial</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="property-block fill-block">
+          <p class="property-label">Preenchimento</p>
+          <div class="fill-row">
+            <label class="color-control">
+              <span class="color-swatch" aria-hidden="true"></span>
+              <input type="text" value="F6DAE0" aria-label="Cor do texto">
+            </label>
+            <label class="opacity-control">
+              <span class="sr-only">Opacidade</span>
+              <input type="text" value="100%" aria-label="Opacidade">
+            </label>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>
