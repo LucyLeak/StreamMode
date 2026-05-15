@@ -87,6 +87,7 @@ export type LayerPatch = Partial<
     | "height"
     | "rotation"
     | "opacity"
+    | "orderIndex"
     | "fill"
     | "content"
     | "blendMode"

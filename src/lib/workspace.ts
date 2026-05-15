@@ -99,7 +99,7 @@ function rowToLayer(row: RecordLike): Layer {
 
 export async function getWorkspaceSnapshot(streamKey = "streamer-1"): Promise<WorkspaceSnapshot> {
   if (!hasDatabaseUrl()) {
-    return getMockWorkspace();
+    return getMockWorkspace(streamKey);
   }
 
   try {
@@ -107,7 +107,7 @@ export async function getWorkspaceSnapshot(streamKey = "streamer-1"): Promise<Wo
     const streamerRows = await (sql`select * from streamers where stream_key = ${streamKey} limit 1` as unknown as Promise<RecordLike[]>);
 
     if (streamerRows.length === 0) {
-      return getMockWorkspace(`Nenhum streamer com stream_key "${streamKey}" foi encontrado no Neon.`);
+      return getMockWorkspace(streamKey, `Nenhum streamer com stream_key "${streamKey}" foi encontrado no Neon.`);
     }
 
     const streamer = rowToStreamer(streamerRows[0]);
@@ -121,7 +121,7 @@ export async function getWorkspaceSnapshot(streamKey = "streamer-1"): Promise<Wo
     const activeScene = scenes.find((scene) => scene.id === streamer.activeSceneId) ?? scenes[0];
 
     if (!activeScene) {
-      return getMockWorkspace(`O streamer "${streamKey}" existe no Neon, mas ainda nao possui cenas.`);
+      return getMockWorkspace(streamKey, `O streamer "${streamKey}" existe no Neon, mas ainda nao possui cenas.`);
     }
 
     const [layerRows, assetRows] = await Promise.all([
@@ -154,7 +154,7 @@ export async function getWorkspaceSnapshot(streamKey = "streamer-1"): Promise<Wo
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Falha desconhecida ao ler o Neon.";
-    return getMockWorkspace(`Falha ao consultar o Neon: ${message}`);
+    return getMockWorkspace(streamKey, `Falha ao consultar o Neon: ${message}`);
   }
 }
 
@@ -203,6 +203,7 @@ export async function createLayer(input: {
   sceneId: string;
   kind: LayerKind;
   name?: string;
+  parentId?: string | null;
   assetId?: string | null;
   x?: number;
   y?: number;
@@ -216,6 +217,7 @@ export async function createLayer(input: {
   const rows = await (sql`
     insert into layers (
       scene_id,
+      parent_id,
       asset_id,
       kind,
       name,
@@ -230,6 +232,7 @@ export async function createLayer(input: {
     )
     values (
       ${input.sceneId},
+      ${input.parentId ?? null},
       ${input.assetId ?? null},
       ${input.kind},
       ${input.name ?? defaultLayerName(input.kind)},
@@ -279,6 +282,7 @@ export async function updateLayer(id: string, patch: LayerPatch) {
       height = ${merged.height},
       rotation = ${merged.rotation},
       opacity = ${merged.opacity},
+      order_index = ${merged.orderIndex},
       fill = ${merged.fill},
       content = ${merged.content},
       blend_mode = ${merged.blendMode},
@@ -289,6 +293,28 @@ export async function updateLayer(id: string, patch: LayerPatch) {
   ` as unknown as Promise<RecordLike[]>);
 
   return rowToLayer(rows[0]);
+}
+
+export async function deleteLayer(id: string) {
+  const sql = getSql();
+  const rows = await (sql`
+    delete from layers
+    where id = ${id}
+    returning id
+  ` as unknown as Promise<RecordLike[]>);
+
+  return rows.length > 0;
+}
+
+export async function deleteAsset(id: string) {
+  const sql = getSql();
+  const rows = await (sql`
+    delete from assets
+    where id = ${id}
+    returning id
+  ` as unknown as Promise<RecordLike[]>);
+
+  return rows.length > 0;
 }
 
 function defaultLayerName(kind: LayerKind) {
@@ -325,11 +351,11 @@ function defaultLayerSize(kind: LayerKind) {
 
 function defaultLayerMetadata(kind: LayerKind): Record<string, unknown> {
   if (kind === "text") {
-    return { fontFamily: "JetBrains Mono NFP", fontSize: 34, fontWeight: 700 };
+    return { fontFamily: "JetBrains Mono", fontSize: 34, fontWeight: 700, lineHeight: 1.1 };
   }
 
   if (kind === "frame") {
-    return { radius: 10, strokeWidth: 2 };
+    return { radius: 10, strokeWidth: 2, background: "rgba(154, 64, 89, 0.12)" };
   }
 
   return {};

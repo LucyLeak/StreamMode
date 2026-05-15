@@ -28,6 +28,7 @@ export async function POST(request: Request) {
     sceneId: body.sceneId,
     kind,
     name: typeof body.name === "string" ? body.name : undefined,
+    parentId: typeof body.parentId === "string" ? body.parentId : null,
     assetId: typeof body.assetId === "string" ? body.assetId : null,
     x: typeof body.x === "number" ? body.x : undefined,
     y: typeof body.y === "number" ? body.y : undefined,

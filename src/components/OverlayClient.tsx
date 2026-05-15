@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { resolveFontFamily } from "@/lib/fonts";
 import type { Asset, Layer, Scene } from "@/lib/types";
 
 type OverlayPayload = {
@@ -80,6 +81,7 @@ function overlayLayerStyle(layer: Layer, scene: Scene): React.CSSProperties {
 
 function renderOverlayLayer(layer: Layer, asset?: Asset) {
   const fontSize = Number(layer.metadata.fontSize ?? 34);
+  const objectFit = String(layer.metadata.objectFit ?? "contain") as React.CSSProperties["objectFit"];
 
   if (layer.kind === "text") {
     return (
@@ -87,9 +89,10 @@ function renderOverlayLayer(layer: Layer, asset?: Asset) {
         className="overlay-text"
         style={{
           color: layer.fill,
-          fontFamily: String(layer.metadata.fontFamily ?? "JetBrains Mono NFP"),
+          fontFamily: resolveFontFamily(layer.metadata.fontFamily),
           fontSize: `${fontSize / 19.2}vw`,
           fontWeight: Number(layer.metadata.fontWeight ?? 700),
+          lineHeight: Number(layer.metadata.lineHeight ?? 1.1),
         }}
       >
         {layer.content}
@@ -98,11 +101,15 @@ function renderOverlayLayer(layer: Layer, asset?: Asset) {
   }
 
   if ((layer.kind === "image" || layer.kind === "gif") && asset?.storageUrl) {
-    return <img className="overlay-media" src={asset.storageUrl} alt="" />;
+    return <img className="overlay-media" src={asset.storageUrl} alt="" style={{ objectFit }} />;
   }
 
   if (layer.kind === "video" && asset?.storageUrl) {
-    return <video className="overlay-media" src={asset.storageUrl} muted loop playsInline autoPlay />;
+    return <video className="overlay-media" src={asset.storageUrl} muted loop playsInline autoPlay style={{ objectFit }} />;
+  }
+
+  if (layer.kind === "audio" && asset?.storageUrl) {
+    return <audio src={asset.storageUrl} autoPlay loop={Boolean(layer.metadata.loop)} />;
   }
 
   if (layer.kind === "frame") {
@@ -113,6 +120,21 @@ function renderOverlayLayer(layer: Layer, asset?: Asset) {
           borderColor: layer.fill,
           borderWidth: Number(layer.metadata.strokeWidth ?? 2),
           borderRadius: Number(layer.metadata.radius ?? 10),
+          background: String(layer.metadata.background ?? "transparent"),
+        }}
+      />
+    );
+  }
+
+  if (layer.kind === "group") {
+    return (
+      <div
+        className="overlay-frame"
+        style={{
+          borderColor: layer.fill,
+          borderWidth: Number(layer.metadata.strokeWidth ?? 2),
+          borderRadius: Number(layer.metadata.radius ?? 10),
+          background: String(layer.metadata.background ?? "transparent"),
         }}
       />
     );

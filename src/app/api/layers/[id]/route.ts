@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasDatabaseUrl } from "@/lib/db";
-import { updateLayer } from "@/lib/workspace";
+import { deleteLayer, updateLayer } from "@/lib/workspace";
 import type { LayerPatch } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +32,7 @@ function cleanPatch(body: Record<string, unknown>): LayerPatch {
     }
   }
 
-  for (const key of ["x", "y", "width", "height", "rotation", "opacity"] as const) {
+  for (const key of ["x", "y", "width", "height", "rotation", "opacity", "orderIndex"] as const) {
     if (typeof body[key] === "number" && Number.isFinite(body[key])) {
       patch[key] = body[key];
     }
@@ -62,4 +62,22 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 
   return NextResponse.json(layer);
+}
+
+export async function DELETE(_request: Request, { params }: Params) {
+  if (!hasDatabaseUrl()) {
+    return NextResponse.json(
+      { error: "DATABASE_URL nao esta configurada. A remocao foi mantida apenas no estado local da interface." },
+      { status: 503 },
+    );
+  }
+
+  const { id } = await params;
+  const deleted = await deleteLayer(id);
+
+  if (!deleted) {
+    return NextResponse.json({ error: "Camada nao encontrada." }, { status: 404 });
+  }
+
+  return NextResponse.json({ deleted: true });
 }
