@@ -67,6 +67,23 @@ npm run build
 4. Rode `npm run db:migrate` localmente com a `DATABASE_URL` correta, ou aplique `database/schema.sql` pelo console do Neon.
 5. Faça o deploy. A Vercel detecta Next.js automaticamente.
 
+## GitHub Actions com Neon
+
+O workflow `.github/workflows/neon_workflow.yml` cria uma branch preview no Neon para cada pull request aberto, reaberto ou atualizado. Quando o pull request e fechado, a branch preview e removida.
+
+Configure no GitHub:
+
+- Repository variable: `NEON_PROJECT_ID`
+- Repository secret: `NEON_API_KEY`
+
+No fluxo de PR, a action:
+
+- cria a branch `preview/pr-{numero}-{branch}`;
+- instala dependencias com `npm ci`;
+- roda `npm run db:migrate` usando a URL pooled da branch preview;
+- roda `npm run typecheck`;
+- remove a branch quando o PR for fechado.
+
 ## OBS
 
 No painel, copie o link exibido em `OBS`. No OBS, adicione uma fonte `Browser` com:
